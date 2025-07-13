@@ -351,7 +351,21 @@ func (o *Tag) UnmarshalCBOR(data []byte) error {
 	var ok bool
 
 	if err := dm.Unmarshal(data, &tag); err != nil {
-		return err
+		// We failed to unmarshal as a tag
+		// We might be handling an old CoRIM, with tags serialized as bstr, pre the breaking change
+		var oldTag []byte
+		err = dm.Unmarshal(data, &oldTag)
+		if err != nil {
+			// If we couldn't unmarshal as a byte array either, then we really fail
+			return err
+		}
+		// Manually unmarshal the first 3 bytes to the tag number
+		if oldTag[0] != 0xd9 {
+			return fmt.Errorf("expected first byte of tag to be 0xd9")
+		}
+		o.Number = uint64(oldTag[1])*256 + uint64(oldTag[2])
+		o.Content = oldTag[3:]
+		return nil
 	}
 
 	o.Content, ok = tag.Content.([]byte)
