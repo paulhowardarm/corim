@@ -4,7 +4,6 @@
 package corim
 
 import (
-	"bytes"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -304,15 +303,7 @@ func (o UnsignedCorim) ToCBOR() ([]byte, error) {
 
 // FromCBOR deserializes a CBOR-encoded unsigned CoRIM into the target UnsignedCorim
 func (o *UnsignedCorim) FromCBOR(data []byte) error {
-	if len(data) < 3 {
-		return errors.New("input too short")
-	}
-
-	if !bytes.Equal(data[:3], UnsignedCorimTag) {
-		return errors.New("did not see unsigned CoRIM tag")
-	}
-
-	return encoding.PopulateStructFromCBOR(dm, data[3:], o)
+	return encoding.PopulateStructFromCBOR(dm, data, o)
 }
 
 // ToJSON serializes the target unsigned CoRIM to JSON
