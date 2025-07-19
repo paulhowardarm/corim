@@ -639,6 +639,13 @@ func (o *Measurement) SetSVN(svn uint64) *Measurement {
 	return o
 }
 
+func (o *Measurement) GetSVN() (snv uint64, err error) {
+	if o.Val.SVN == nil {
+		return 0, errors.New("NO SVN")
+	}
+	return o.Val.SVN.GetSVN()
+}
+
 // SetMinSVN sets the supplied min-svn in the measurement-values-map of the
 // target measurement
 func (o *Measurement) SetMinSVN(svn uint64) *Measurement {
