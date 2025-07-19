@@ -5,6 +5,7 @@ package comid
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"strconv"
@@ -315,4 +316,19 @@ func RegisterSVNType(tag uint64, factory ISVNFactory) error {
 	svnValueRegister[typ] = factory
 
 	return nil
+}
+
+func (o *SVN) GetSVN() (uint64, error) {
+	if o.Value.Valid() != nil {
+		return 0, fmt.Errorf("invalid value")
+	}
+	switch t := o.Value.(type) {
+	case TaggedSVN:
+		return uint64(t), nil
+	case TaggedMinSVN:
+		return uint64(t), nil
+	default:
+		return 0, errors.New("invalid SVN")
+	}
+
 }
